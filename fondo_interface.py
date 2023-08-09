@@ -8,8 +8,8 @@ from PIL import Image, ImageTk
 
 cap_selfie_segmentation = mp.solutions.selfie_segmentation
 
-new_width = 1280
-new_height = 720
+new_width = 640
+new_height = 480
 BG_IMAGE = None
 blur_value = 19
 model_selection = 0
@@ -77,19 +77,19 @@ update_resolution_button.pack()
 # Control de desenfoque
 blur_label = tk.Label(root, text="Desenfoque:")
 blur_label.pack()
-blur_scale = tk.Scale(root, from_=0, to=30, orient="horizontal")
+blur_scale = tk.Scale(root, from_=1, to=19, orient="horizontal")
 blur_scale.pack()
 
-update_blur_button = tk.Button(root, text="Actualizar Desenfoque", command=update_blur)
+update_blur_button = tk.Button(root, text="Actualizar Suavisado", command=update_blur)
 update_blur_button.pack()
 
 # Selección del modelo de segmentación
 model_var = tk.IntVar()
 model_var.set(model_selection)  # Valor predeterminado: Modelo 0
-model_0_radio = tk.Radiobutton(root, text="Modelo 0", variable=model_var, value=0, command=change_model)
+model_0_radio = tk.Radiobutton(root, text="Modelo bajo", variable=model_var, value=0, command=change_model)
 model_0_radio.pack()
 
-model_1_radio = tk.Radiobutton(root, text="Modelo 1", variable=model_var, value=1, command=change_model)
+model_1_radio = tk.Radiobutton(root, text="Modelo medio", variable=model_var, value=1, command=change_model)
 model_1_radio.pack()
 
 # Configuración de la cámara
