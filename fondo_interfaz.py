@@ -11,7 +11,7 @@ cap_selfie_segmentation = mp.solutions.selfie_segmentation
 new_width = 640
 new_height = 480
 BG_IMAGE = None
-blur_value = 19
+blur_value = 13
 model_selection = 0
 
 # Función para cambiar el fondo
@@ -52,7 +52,7 @@ def exit_loop():
 
 # Configuración de la interfaz
 root = tk.Tk()
-root.title("Selfie Segmentation App")
+root.title("Besthelp Selfie Segmentation App")
 
 should_exit = False  # Bandera para controlar la salida del bucle
 
@@ -137,8 +137,9 @@ while not should_exit:
         break
 
     frame_rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+
     with cap_selfie_segmentation.SelfieSegmentation(model_selection=model_var.get()) as selfie_segmentation:
-        results = selfie_segmentation.process(frame_rgb)
+        results = selfie_segmentation.process(image=frame_rgb)
 
     # Procesar la imagen y mostrarla en la interfaz
     th = cv2.threshold(results.segmentation_mask, 0.75, 255, cv2.THRESH_BINARY)[1]
