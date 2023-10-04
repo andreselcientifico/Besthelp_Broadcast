@@ -55,7 +55,7 @@ cap.set(cv2.CAP_PROP_FRAME_WIDTH, new_width)
 cap.set(cv2.CAP_PROP_FRAME_HEIGHT, new_height)
 
 BG_COLOR = (255, 0, 48)
-IMAGE_PATH = "C:/Users/Andres_Elcientifico/Documents/miro.jpg"
+IMAGE_PATH = ""
 BG_IMAGE = cv2.imread(IMAGE_PATH)
 BG_IMAGE = cv2.resize(BG_IMAGE, (new_width, new_height))  # Redimensionar imagen de fondo
 
