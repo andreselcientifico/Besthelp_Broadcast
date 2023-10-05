@@ -55,7 +55,7 @@ cap.set(cv2.CAP_PROP_FRAME_WIDTH, new_width)
 cap.set(cv2.CAP_PROP_FRAME_HEIGHT, new_height)
 
 BG_COLOR = (255, 0, 48)
-IMAGE_PATH = ""
+IMAGE_PATH = "C:/Users/Andres_Elcientifico/Pictures/Captura de pantalla 2023-08-16 162730.png"
 BG_IMAGE = cv2.imread(IMAGE_PATH)
 BG_IMAGE = cv2.resize(BG_IMAGE, (new_width, new_height))  # Redimensionar imagen de fondo
 
@@ -113,7 +113,7 @@ with cap_selfie_segmentation.SelfieSegmentation(
                 img1 = img1.to('cuda')
             iteration += 1
        
-        cv2.imshow('frame', output_cap)
+        #cv2.imshow('frame', output_cap)
                   
         if np.array_equal(img0, img1):
             print("No se detectó movimiento.")
@@ -162,7 +162,7 @@ with cap_selfie_segmentation.SelfieSegmentation(
                         tmp.append(mid)
                     tmp.append(img1)
                     img_list = tmp
-            img = imagen0 + img_list[0][0].cpu().numpy().transpose(1, 2, 0)[:h, :w]
+            img = imagen0 + img_list[0][0].cpu().numpy().transpose(1, 2, 0)[:h, :w] + imagen1
             img = np.clip(img, 0, 255)
             img = img.astype(np.uint8)
 
