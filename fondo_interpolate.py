@@ -6,6 +6,13 @@ from torch.nn import functional as F
 import argparse
 
 import torch
+
+import time
+
+start_time = time.time()
+frame_count = 0
+
+
 print(torch.__version__)
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -14,7 +21,7 @@ if torch.cuda.is_available():
     torch.backends.cudnn.enabled = True
     torch.backends.cudnn.benchmark = True
 
-args = (4, 0, 0.02, 8,'train_log')
+args = (0, 1, 0.02, 8,'train_log')
 
 try:
     try:
@@ -63,6 +70,7 @@ with cap_selfie_segmentation.SelfieSegmentation(
     model_selection = 0) as selfie_segmentation:
     
     while True:
+        frame_count += 1
         ret, frame = cap.read()
         if ret == False:
             break
@@ -89,6 +97,7 @@ with cap_selfie_segmentation.SelfieSegmentation(
         # Background + Foreground
         while iteration<2:
             output_cap = cv2.add(bg, fg)
+            
             if img0 is None:
                 img0 = output_cap
                 imagen0 = img0
@@ -114,13 +123,10 @@ with cap_selfie_segmentation.SelfieSegmentation(
             iteration += 1
        
         #cv2.imshow('frame', output_cap)
-                  
+
         if np.array_equal(img0, img1):
             print("No se detectó movimiento.")
         else:
-            print('movimiento detectado')
-            print(img0.shape)
-            print(img1.shape)
             n, c, h, w = img0.shape
             ph = ((h - 1) // 32 + 1) * 32
             pw = ((w - 1) // 32 + 1) * 32
@@ -162,14 +168,20 @@ with cap_selfie_segmentation.SelfieSegmentation(
                         tmp.append(mid)
                     tmp.append(img1)
                     img_list = tmp
-            img = imagen0 + img_list[0][0].cpu().numpy().transpose(1, 2, 0)[:h, :w] + imagen1
+            img = img_list[0][0].cpu().numpy().transpose(1, 2, 0)[:h, :w]
             img = np.clip(img, 0, 255)
             img = img.astype(np.uint8)
 
             cv2.imshow('Imagen', img)
 
+        if time.time() - start_time >= 1.0:
+            fps = frame_count * len(img_list) / (time.time() - start_time)
+            print(f"FPS: {fps:.2f}")
+            frame_count = 0
+            start_time = time.time()
+
         if cv2.waitKey(1) & 0xff == 27:
             break
-
+    
 cap.release()
 cv2.destroyAllWindows()
