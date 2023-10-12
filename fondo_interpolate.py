@@ -66,6 +66,10 @@ IMAGE_PATH = "C:/Users/Andres_Elcientifico/Pictures/Captura de pantalla 2023-08-
 BG_IMAGE = cv2.imread(IMAGE_PATH)
 BG_IMAGE = cv2.resize(BG_IMAGE, (new_width, new_height))  # Redimensionar imagen de fondo
 
+font = cv2.FONT_HERSHEY_SIMPLEX  # Fuente para mostrar el FPS
+font_scale = 1
+font_color = (255, 255, 255)  # Color del texto
+
 with cap_selfie_segmentation.SelfieSegmentation(
     model_selection = 0) as selfie_segmentation:
     
@@ -100,7 +104,6 @@ with cap_selfie_segmentation.SelfieSegmentation(
             
             if img0 is None:
                 img0 = output_cap
-                imagen0 = img0
                 # Transponer las dimensiones para que coincidan con la forma deseada (C, H, W)
                 img0 = np.transpose(img0, (2, 0, 1))
                 # Agregar una dimensión adicional para el lote
@@ -111,7 +114,6 @@ with cap_selfie_segmentation.SelfieSegmentation(
                 img0 = img0.to('cuda')
             elif iteration==1 and img1 is None:
                 img1 = output_cap
-                imagen1 = img1
                 # Transponer las dimensiones para que coincidan con la forma deseada (C, H, W)
                 img1 = np.transpose(img1, (2, 0, 1))
                 # Agregar una dimensión adicional para el lote
@@ -172,13 +174,15 @@ with cap_selfie_segmentation.SelfieSegmentation(
             img = np.clip(img, 0, 255)
             img = img.astype(np.uint8)
 
+            if time.time() - start_time >= 1.0:
+                fps = frame_count * len(img_list) / (time.time() - start_time)
+                frame_count = 0
+                start_time = time.time()
+
+            cv2.putText(img, f"FPS: {fps:.2f}", (10, 30), font, font_scale, font_color, 2)
             cv2.imshow('Imagen', img)
 
-        if time.time() - start_time >= 1.0:
-            fps = frame_count * len(img_list) / (time.time() - start_time)
-            print(f"FPS: {fps:.2f}")
-            frame_count = 0
-            start_time = time.time()
+        
 
         if cv2.waitKey(1) & 0xff == 27:
             break
