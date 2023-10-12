@@ -1,16 +1,12 @@
-import cv2
 import mediapipe as mp
 import numpy as np
-import torch
 from torch.nn import functional as F
-import argparse
-
 import torch
-
 import time
-
+import cv2
 start_time = time.time()
 frame_count = 0
+frame_count_camera = 0
 
 
 print(torch.__version__)
@@ -74,7 +70,6 @@ with cap_selfie_segmentation.SelfieSegmentation(
     model_selection = 0) as selfie_segmentation:
     
     while True:
-        frame_count += 1
         ret, frame = cap.read()
         if ret == False:
             break
@@ -174,15 +169,19 @@ with cap_selfie_segmentation.SelfieSegmentation(
             img = np.clip(img, 0, 255)
             img = img.astype(np.uint8)
 
+            # Calcular el FPS
+            frame_count += len(img_list)
+            frame_count_camera += 1
             if time.time() - start_time >= 1.0:
-                fps = frame_count * len(img_list) / (time.time() - start_time)
+                fps = frame_count / (time.time() - start_time)
+                fps_camera = frame_count_camera / (time.time() - start_time)
                 frame_count = 0
+                frame_count_camera = 0
                 start_time = time.time()
 
             cv2.putText(img, f"FPS: {fps:.2f}", (10, 30), font, font_scale, font_color, 2)
+            cv2.putText(img, f"FPS_camera: {fps_camera:.2f}", (10, 60), font, font_scale, font_color, 2)
             cv2.imshow('Imagen', img)
-
-        
 
         if cv2.waitKey(1) & 0xff == 27:
             break
